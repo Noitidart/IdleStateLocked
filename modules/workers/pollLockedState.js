@@ -21,19 +21,25 @@ self.onmessage = function (msg) {
 		case 'getDetectionInterval':
 			self.postMessage({aTopic:'getDetectionInterval', aData:detectionInterval});
 			break;
-		case 'setDetectionInterval':
+		case 'setDetectionIntervalInSeconds':
 			stopPolling();
 			var now = new Date().getTime();
+			var newDetectionInterval = msg.data.aData * 1000; //convert to ms
+			if (newDetectionInterval <= 0) {
+				throw new Error('Must set detectionInterval greater than or equal to 1s');
+			} else if (newDetectionInterval == detectionInterval) {
+				throw new Error('New detectionInterval is same as current, so no change');
+			}
 			detectionInterval = msg.data.aData;
 			var sinceLastAuto = now - timeLastDid__timeout_queryStateAndFireIfStateChange__;
 			if (sinceLastAuto >= detectionInterval) {
 				//user changed detectionInterval and the time since it last did (timeout_queryStateAndFireIfStateChange) is greater than the new detectionInterval so queryStateAndFireIfStateChange() then after that startPolling with new detectionInterval
-				self.postMessage({aTopic:'setDetectionInterval', aData:'sinceLastAuto is ' + sinceLastAuto + 'ms and this is greater than the new detectionInterval so triggery queryState, and then startPoll'});
+				self.postMessage({aTopic:'setDetectionIntervalInSeconds', aData:'sinceLastAuto is ' + sinceLastAuto + 'ms and this is greater than the new detectionInterval so triggery queryState, and then startPoll'});
 				queryStateAndFireIfStateChange();
 				startPolling();
 			} else {
 				//user changed detectionInterval and the time since it last did (timeout_queryStateAndFireIfStateChange) is less than the new detectionInterval so startPoll with the difference till it reaches the new detectionInterval
-				self.postMessage({aTopic:'setDetectionInterval', aData:'sinceLastAuto is ' + sinceLastAuto + 'ms and this is less than the new detectionInterval so startPoll with override of ' + (detectionInterval - sinceLastAuto) + 'ms'});
+				self.postMessage({aTopic:'setDetectionIntervalInSeconds', aData:'sinceLastAuto is ' + sinceLastAuto + 'ms and this is less than the new detectionInterval so startPoll with override of ' + (detectionInterval - sinceLastAuto) + 'ms'});
 				startPolling(detectionInterval - sinceLastAuto);
 			}
 			break;

@@ -40,6 +40,9 @@ function loadAndSetupChromeWorker_pollLockedState() {
 			case 'setDetectionInterval':
 				console.log('setDetectionInterval :: ', msg.data.aData);
 				break;
+			case 'error':
+				//do nothing as browser console will show the `throw new Error` from the ChromeWorker
+				break;
 			default:
 				console.warn('no handling for incoming aTopic of:', msg.data.aTopic);
 				//do nothing
