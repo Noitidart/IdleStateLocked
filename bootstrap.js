@@ -25,6 +25,7 @@ function loadAndSetupChromeWorker_pollLockedState() {
 
 	function handleMessageFromChromeWorker_pollLockedState(msg) {
 		//console.log('incoming message from worker', 'pollLockedState', 'msg:', msg, msg.data);
+		//if message from chromeworker has atopic not found in this switch, but has aCallbackId, then it will just look for the aCallbackId in the callbacksAwaiting object
 		switch (msg.data.aTopic) {
 			case 'queryState':
 				console.info('incoming queryState reply:', msg.data.aData);
@@ -51,7 +52,7 @@ function loadAndSetupChromeWorker_pollLockedState() {
 						chromeWorker_pollLockedState_bootstrapCallbacksAwaitingPostMessageFromChromeWorker[msg.data.aCallbackId](msg.data);
 						delete chromeWorker_pollLockedState_bootstrapCallbacksAwaitingPostMessageFromChromeWorker[msg.data.aCallbackId];
 					} else {
-						console.log('bootstrap got msg from ChromeWorker with aCallbackId but this aCallbackId was not found in this chromeworkers object of callbacks awaiting msgs');
+						console.error('bootstrap got msg from ChromeWorker with aCallbackId but this aCallbackId was not found in this chromeworkers object of callbacks awaiting msgs'); //this should not happen //i can see callbacks getting left in the object though, like if the chromeworker side erored out then it wouldnt call its self.postMessage
 					}
 				} else {
 					console.warn('no handling for incoming aTopic of:', msg.data.aTopic);
@@ -69,7 +70,7 @@ function loadAndSetupChromeWorker_pollLockedState() {
 		chromeWorker_pollLockedState_bootstrapCallbacksAwaitingPostMessageFromChromeWorker[msg.aCallbackId] = callback;
 		chromeWorker_pollLockedState.postMessage(msg);
 	}
-	//example usage: chromeWorker_pollLockedState.postMessageWithCallback({aTopic:'getDetectionIntervalInSeconds'}, function(msgData) { console.log('received detectionIntervalInSeconds, it is:', msgData.aData) });
+	//example usage: chromeWorker_pollLockedState.postMessageWithCallback({aTopic:'getDetectionIntervalInSeconds'}, function(msgData) { console.log('received detectionIntervalInSeconds, it is:', msgData.detectionIntervalInSeconds) });
 }
 
 function install() {}

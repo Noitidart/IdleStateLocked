@@ -23,7 +23,7 @@ self.onmessage = function (msg) {
 			if (!('aCallbackId' in msg.data)) {
 				throw new Error('cannot postMessage of aTopic of getDetectionIntervalInSeconds without also submitting a aCallbackId with it');
 			}
-			self.postMessage({aTopic:'getDetectionIntervalInSeconds', aData:(detectionInterval/1000), aCallbackId: msg.data.aCallbackId});
+			self.postMessage({aTopic:'getDetectionIntervalInSeconds', detectionIntervalInSeconds:(detectionInterval/1000), aCallbackId: msg.data.aCallbackId});
 			break;
 		case 'setDetectionIntervalInSeconds':
 			var now = new Date().getTime();
