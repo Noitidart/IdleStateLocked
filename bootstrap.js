@@ -37,8 +37,8 @@ function loadAndSetupChromeWorker_pollLockedState() {
 			case 'debug-queryState-fired':
 				console.log('debug-queryState-fired', new Date().toLocaleTimeString());
 				break;
-			case 'setDetectionInterval':
-				console.log('setDetectionInterval :: ', msg.data.aData);
+			case 'setDetectionIntervalInSeconds':
+				console.log('setDetectionIntervalInSeconds :: ', msg.data.aData);
 				break;
 			case 'error':
 				//do nothing as browser console will show the `throw new Error` from the ChromeWorker

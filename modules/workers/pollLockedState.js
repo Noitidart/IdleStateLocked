@@ -22,7 +22,6 @@ self.onmessage = function (msg) {
 			self.postMessage({aTopic:'getDetectionInterval', aData:detectionInterval});
 			break;
 		case 'setDetectionIntervalInSeconds':
-			stopPolling();
 			var now = new Date().getTime();
 			var newDetectionInterval = msg.data.aData * 1000; //convert to ms
 			if (newDetectionInterval <= 0) {
@@ -30,7 +29,8 @@ self.onmessage = function (msg) {
 			} else if (newDetectionInterval == detectionInterval) {
 				throw new Error('New detectionInterval is same as current, so no change');
 			}
-			detectionInterval = msg.data.aData;
+			stopPolling();
+			detectionInterval = newDetectionInterval;
 			var sinceLastAuto = now - timeLastDid__timeout_queryStateAndFireIfStateChange__;
 			if (sinceLastAuto >= detectionInterval) {
 				//user changed detectionInterval and the time since it last did (timeout_queryStateAndFireIfStateChange) is greater than the new detectionInterval so queryStateAndFireIfStateChange() then after that startPolling with new detectionInterval
