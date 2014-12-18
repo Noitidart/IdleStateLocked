@@ -18,8 +18,12 @@ self.onmessage = function (msg) {
 	//dump('incoming message to ChromeWorker, msg:' + uneval(msg)); //does not dump to Browser Console
 	//console.log('msg from worker onmessage'); //does not work but doesnt interrtup code
 	switch (msg.data.aTopic) {
-		case 'getDetectionInterval':
-			self.postMessage({aTopic:'getDetectionInterval', aData:detectionInterval});
+		case 'getDetectionIntervalInSeconds':
+			//must come with msg.data.aCallbackId
+			if (!('aCallbackId' in msg.data)) {
+				throw new Error('cannot postMessage of aTopic of getDetectionIntervalInSeconds without also submitting a aCallbackId with it');
+			}
+			self.postMessage({aTopic:'getDetectionIntervalInSeconds', aData:(detectionInterval/1000), aCallbackId: msg.data.aCallbackId});
 			break;
 		case 'setDetectionIntervalInSeconds':
 			var now = new Date().getTime();
