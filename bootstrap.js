@@ -1,14 +1,10 @@
 const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 const self = {
-	name: 'IdleStateLocked',
-	id: 'IdleStateLocked@jetpack',
-	packagename: 'idlestatelocked',
 	path: {
 		chrome: 'chrome://idlestatelocked/content/',
 		modules: 'chrome://idlestatelocked/content/modules/',
 		workers: 'chrome://idlestatelocked/content/modules/workers/'
-	},
-	aData: 0
+	}
 };
 Cu.import('resource://gre/modules/Services.jsm');
 Cu.import('resource://gre/modules/devtools/Console.jsm');
@@ -25,15 +21,6 @@ function loadAndSetupChromeWorker_pollLockedState() {
 	function handleMessageFromChromeWorker_pollLockedState(msg) {
 		//console.log('incoming message from worker', 'pollLockedState', 'msg:', msg, msg.data);
 		switch (msg.data.aTopic) {
-			case 'queryState':
-				console.info('incoming queryState reply:', msg.data.aData);
-				break;
-			case 'onStateChange':
-				Services.obs.notifyObservers(null, 'IdleStateLocked::onStateChange', msg.data.aData);
-				break;
-			case 'debug-timeout-fired':
-				console.log('debug-timeout-fired');
-				break;
 			case 'debug-queryState-fired':
 				console.log('debug-queryState-fired');
 				break;
