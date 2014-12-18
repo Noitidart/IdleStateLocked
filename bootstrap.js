@@ -44,5 +44,5 @@ function startup() {
  
 function shutdown(aReason) {
 	if (aReason == APP_SHUTDOWN) return;
-	//chromeWorker_pollLockedState.terminate();
+	chromeWorker_pollLockedState.terminate();
 }
