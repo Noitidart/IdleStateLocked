@@ -32,13 +32,16 @@ function loadAndSetupChromeWorker_pollLockedState() {
 				Services.obs.notifyObservers(null, 'IdleStateLocked::onStateChange', msg.data.aData);
 				break;
 			case 'debug-timeout-fired':
-				console.log('debug-timeout-fired');
+				console.log('debug-timeout-fired', new Date().toLocaleTimeString());
 				break;
 			case 'debug-queryState-fired':
-				console.log('debug-queryState-fired');
+				console.log('debug-queryState-fired', new Date().toLocaleTimeString());
+				break;
+			case 'setDetectionInterval':
+				console.log('setDetectionInterval :: ', msg.data.aData);
 				break;
 			default:
-				console.warn('no handle for incoming aTopic of:', aTopic);
+				console.warn('no handling for incoming aTopic of:', msg.data.aTopic);
 				//do nothing
 		}
 	}
@@ -57,5 +60,5 @@ function startup() {
  
 function shutdown(aReason) {
 	if (aReason == APP_SHUTDOWN) return;
-	//chromeWorker_pollLockedState.terminate();
+	chromeWorker_pollLockedState.terminate();
 }

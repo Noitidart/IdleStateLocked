@@ -25,15 +25,17 @@ self.onmessage = function (msg) {
 			stopPolling();
 			var now = new Date().getTime();
 			detectionInterval = msg.data.aData;
-			if (now - timeLastDid__timeout_queryStateAndFireIfStateChange__ >= detectionInterval) {
+			var sinceLastAuto = now - timeLastDid__timeout_queryStateAndFireIfStateChange__;
+			if (sinceLastAuto >= detectionInterval) {
 				//user changed detectionInterval and the time since it last did (timeout_queryStateAndFireIfStateChange) is greater than the new detectionInterval so queryStateAndFireIfStateChange() then after that startPolling with new detectionInterval
+				self.postMessage({aTopic:'setDetectionInterval', aData:'sinceLastAuto is ' + sinceLastAuto + 'ms and this is greater than the new detectionInterval so triggery queryState, and then startPoll'});
 				queryStateAndFireIfStateChange();
 				startPolling();
 			} else {
 				//user changed detectionInterval and the time since it last did (timeout_queryStateAndFireIfStateChange) is less than the new detectionInterval so startPoll with the difference till it reaches the new detectionInterval
-				startPolling(now - timeLastDid__timeout_queryStateAndFireIfStateChange__);
+				self.postMessage({aTopic:'setDetectionInterval', aData:'sinceLastAuto is ' + sinceLastAuto + 'ms and this is less than the new detectionInterval so startPoll with override of ' + (detectionInterval - sinceLastAuto) + 'ms'});
+				startPolling(detectionInterval - sinceLastAuto);
 			}
-			self.postMessage({aTopic:'setDetectionInterval', aData:'success; updated detectionInterval, cleared intervalTimer, triggered queryStateFireOnStateChange, set intervalTimer to detectionInterval'});
 			break;
 		case 'queryState':
 			var nowState = queryState();
